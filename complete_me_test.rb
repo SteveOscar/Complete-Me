@@ -37,9 +37,8 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["a"], tree.children.keys
   end
 
-  def test_flags_false_for_full_word
-    tree.insert("art")
-    assert tree.flag
+  def test_flag_start_as_false
+    refute tree.flag
   end
 
   def test_flags_true_for_full_word
@@ -47,8 +46,17 @@ class CompleteMeTest < Minitest::Test
     refute tree.children["a"].flag
   end
 
+  def test_counts_one_word
+    tree.insert("a")
+    assert tree.count(tree) == 1
+  end
 
-
+  def test_counts_two_words
+    tree.insert("a")
+    tree.insert("b")
+    tree.insert("c")
+    assert tree.count(tree) == 3
+  end
 
 
 end
