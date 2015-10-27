@@ -37,13 +37,13 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["a"], tree.children.keys
   end
 
-  def test_flag_start_as_false
-    refute tree.flag
+  def test_is_word_start_as_false
+    refute tree.is_word
   end
 
-  def test_flags_true_for_full_word
+  def test_is_words_true_for_full_word
     tree.insert("art")
-    refute tree.children["a"].flag
+    refute tree.children["a"].is_word
   end
 
   def test_counts_singe_letter_word
@@ -62,6 +62,12 @@ class CompleteMeTest < Minitest::Test
     assert_equal 1, tree.count
   end
 
+  def test_counts_prefix_words
+    tree.insert("ab")
+    tree.insert("abc")
+    assert_equal 2, tree.count
+  end
+
   def test_counts_words_with_common_prefix
     tree.insert("art")
     tree.insert("bat")
@@ -73,6 +79,4 @@ class CompleteMeTest < Minitest::Test
     result = tree.populate(text)
     assert tree.count == 3
   end
-
-
 end
