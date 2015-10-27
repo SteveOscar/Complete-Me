@@ -1,4 +1,5 @@
 require 'pry'
+require 'set'
 class CompleteMe
   attr_accessor :children, :flag, :word, :count
 
@@ -32,20 +33,17 @@ class CompleteMe
     words.each { |word| insert(word)}
   end
 
-  def keys(node)
-    node.children.keys
-  end
-
   def count
     @count
   end
 
-end
+  def count(sum = 0)
+    keys = children.keys
+    keys.each do |key|
+      sum += 1 if children[key].flag
+      children[key].count(sum) unless flag
+    end
+    sum
+  end
 
-# def count(sum = 0)
-#   keys = children.keys
-#   keys.each do |key|
-#     sum += 1 if flag
-#     children[key].count(sum) unless flag
-#   end
-# end
+end

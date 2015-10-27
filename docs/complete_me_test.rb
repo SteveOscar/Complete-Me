@@ -13,7 +13,7 @@ class CompleteMeTest < Minitest::Test
   def test_empty_tree
     assert tree.children = {}
   end
-
+  
   def test_it_inserts_a_letter
     tree.insert("c")
     assert_equal ["c"], tree.children.keys
@@ -46,21 +46,26 @@ class CompleteMeTest < Minitest::Test
     refute tree.children["a"].flag
   end
 
-  def test_counts_one_word
+  def test_counts_singe_letter_word
     tree.insert("a")
-    assert tree.count == 1
+    assert_equal 1, tree.count
   end
 
-  def test_counts_words_with_separate_prefix
+  def test_counts_two_single_letter_words
+    tree.insert("a")
+    tree.insert("b")
+    assert_equal 2, tree.count
+  end
+
+  def test_counts_one_word
     tree.insert("abc")
-    tree.insert("bad")
-    assert tree.count == 2
+    assert_equal 2, tree.count
   end
 
   def test_counts_words_with_common_prefix
-    tree.insert("a")
-    tree.insert("b")
-    assert tree.count == 2
+    tree.insert("art")
+    tree.insert("bat")
+    assert_equal 2, tree.count
   end
 
   def test_it_populates_a_file
