@@ -1,15 +1,16 @@
 require 'pry'
 
 class CompleteMe
-  attr_accessor :children, :flag, :letter, :word
+  attr_accessor :children, :flag, :word
 
-  def initialize(value = nil)
+  def initialize(word = nil)
     @children = {}
     @flag = false
     @word = word
   end
 
   def add_letter(letter)
+    binding.pry
     val = word ? word + letter : letter
     children[letter] = CompleteMe.new(val)
   end

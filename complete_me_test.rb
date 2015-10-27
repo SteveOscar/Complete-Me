@@ -10,23 +10,31 @@ class CompleteMeTest < Minitest::Test
     @tree = CompleteMe.new
   end
 
-  def test_it_inserts_a_letter
-    tree.insert("c")
-    assert_equal ["c"], tree.children.keys
-  end
+  # def test_empty_tree
+  #   assert tree.children = {}
+  # end
+  #
+  # def test_it_inserts_a_letter
+  #   tree.insert("c")
+  #   assert_equal ["c"], tree.children.keys
+  # end
+  #
+  # def test_it_inserts_2_letters
+  #   tree.insert("a")
+  #   tree.insert("b")
+  #   assert_equal ["a", "b"], tree.children.keys
+  # end
 
-  def test_it_inserts_2_letters
-    tree.insert("a")
-    tree.insert("b")
-    tree.insert("c")
-    assert_equal ["a", "b", "c"], tree.children.keys
-  end
-
-  def test_it_inserts_words
+  def test_it_inserts_words_with_different_first_letters
     tree.insert("art")
     tree.insert("bat")
-    tree.insert("cat")
-    assert_equal ["a", "b", "c"], tree.children.keys
+    assert_equal ["a", "b"], tree.children.keys
+  end
+
+  def test_it_inserts_words_with_same_first_letters
+    tree.insert("art")
+    tree.insert("air")
+    assert_equal ["a"], tree.children.keys
   end
 
 
