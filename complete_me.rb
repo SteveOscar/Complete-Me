@@ -1,13 +1,13 @@
 require 'pry'
-
+require 'set'
 class CompleteMe
-  attr_accessor :children, :flag, :word, :total
+  attr_accessor :children, :flag, :word
 
   def initialize(word = nil, flag = false)
     @children = {}
     @flag = flag
     @word = word
-    @total = 0
+    @count = 0
   end
 
   def add_letter(letter, string)
@@ -20,6 +20,7 @@ class CompleteMe
   end
 
   def insert(string)
+    @count += 1
     node = self
     string.each_char do |letter|
       node.add_letter(letter, string) unless node.children.has_key?(letter)
@@ -27,22 +28,22 @@ class CompleteMe
     end
   end
 
-  def keys(node)
-    node.children.keys
+  def populate(text)
+    words = text.split("\n")
+    words.each { |word| insert(word)}
   end
 
-  def count(node)
-    node.children.keys.each do |key|
-      if node.children[key].flag
-        @total += 1
-      else
-        node = node.children[key]
-        count(node)
-      end
-    end
-    @total
+  def count
+    @count
   end
 
-
+  # def count(sum = 0)
+  #   keys = children.keys
+  #   keys.each do |key|
+  #     sum += 1 if children[key].flag
+  #     children[key].count(sum) unless flag
+  #   end
+  #   sum
+  # end
 
 end

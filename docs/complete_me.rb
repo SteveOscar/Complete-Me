@@ -7,7 +7,7 @@ class CompleteMe
     @children = {}
     @flag = flag
     @word = word
-    @count = 0
+    @count = 120
   end
 
   def add_letter(letter, string)
@@ -30,20 +30,22 @@ class CompleteMe
 
   def populate(text)
     words = text.split("\n")
-    words.each { |word| insert(word)}
+    words.each { |word| insert(word) }
   end
 
-  def count
-    @count
-  end
+  # def count(sum = 0)
+  #   keys = children.keys
+  #   keys.each do |key|
+  #     sum += 1 if children[key].flag
+  #     children[key].count(sum) unless flag
+  #   end
+  #   sum
+  # end
 
-  def count(sum = 0)
-    keys = children.keys
-    keys.each do |key|
-      sum += 1 if children[key].flag
-      children[key].count(sum) unless flag
-    end
-    sum
+  def auto_suggest(prefix)
+    # iterate through each letter until the letter has no children
+    # return a set of the path to each word
+
   end
 
 end

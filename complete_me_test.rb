@@ -46,21 +46,32 @@ class CompleteMeTest < Minitest::Test
     refute tree.children["a"].flag
   end
 
-  def test_counts_one_word
+  def test_counts_singe_letter_word
     tree.insert("a")
-    assert tree.count(tree) == 1
+    assert_equal 1, tree.count
   end
 
-  def test_counts_words_with_separate_prefix
+  def test_counts_two_single_letter_words
+    tree.insert("a")
+    tree.insert("b")
+    assert_equal 2, tree.count
+  end
+
+  def test_counts_one_word
     tree.insert("abc")
-    tree.insert("bad")
-    assert tree.count(tree) == 2
+    assert_equal 1, tree.count
   end
 
   def test_counts_words_with_common_prefix
-    tree.insert("bad")
-    tree.insert("bar")
-    assert tree.count(tree) == 2
+    tree.insert("art")
+    tree.insert("bat")
+    assert_equal 2, tree.count
+  end
+
+  def test_it_populates_a_file
+    text = "car\nbat\nzoo"
+    result = tree.populate(text)
+    assert tree.count == 3
   end
 
 

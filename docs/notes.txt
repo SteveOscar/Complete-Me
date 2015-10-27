@@ -1,12 +1,3 @@
 for testing, test error cases by raising ArgumentErrors, etc
 
 
-  def auto_suggest(word)
-    node = self
-    word.each_char do |char|
-      return Set.new unless node.children.has_key?(char)
-      node = node.children[char]
-    end
-    binding.pry
-    return node
-    end
