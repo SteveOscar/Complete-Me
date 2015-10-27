@@ -1,0 +1,1 @@
+for testing, test error cases by raising ArgumentErrors, etc
