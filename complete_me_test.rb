@@ -51,11 +51,16 @@ class CompleteMeTest < Minitest::Test
     assert tree.count(tree) == 1
   end
 
-  def test_counts_two_words
-    tree.insert("a")
-    tree.insert("b")
-    tree.insert("c")
-    assert tree.count(tree) == 3
+  def test_counts_words_with_separate_prefix
+    tree.insert("abc")
+    tree.insert("bad")
+    assert tree.count(tree) == 2
+  end
+
+  def test_counts_words_with_common_prefix
+    tree.insert("bad")
+    tree.insert("bar")
+    assert tree.count(tree) == 2
   end
 
 

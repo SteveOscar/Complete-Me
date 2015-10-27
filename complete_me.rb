@@ -33,9 +33,14 @@ class CompleteMe
 
   def count(node)
     node.children.keys.each do |key|
-      @total += 1 if node.children[key].flag
+      if node.children[key].flag
+        @total += 1
+      else
+        node = node.children[key]
+        count(node)
+      end
     end
-    total
+    @total
   end
 
 
