@@ -30,9 +30,6 @@ class CompleteMe
     words.each { |word| insert(word)}
   end
 
-  # a  count -> [2].reduce(:+) + (0) => 2
-  # b* count -> [1].reduce(:+) + (1) => 2
-  # c*       ->            1         => 1
   def count
     if children.empty?
       is_word ? 1 : 0
@@ -64,5 +61,7 @@ class CompleteMe
       return endings.flatten
     end
   end
+
+  ## add tests that RaiseError
 
 end
