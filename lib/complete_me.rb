@@ -23,6 +23,7 @@ class CompleteMe
     string.each_char do |letter|
       node.add_letter(letter, string) unless node.children.has_key?(letter)
       node = node.children[letter]
+      @is_word = true if node.children.has_key?(letter) && letter == string[-1]
     end
   end
 
@@ -42,13 +43,11 @@ class CompleteMe
     end
   end
 
-  #.sort_by { |k, v| -v }
-
   def suggestion_weighting(suggestions)
-    weighted = Hash[suggestions.map {|x| [x, 0]}]
-    @weighted_suggestions.merge!(weighted) { |key, v1, v2| v1 }
-    print (weighted_suggestions).sort_by { |k, v| -v }.map { |k, v| k }
-    select
+    return weighted = Hash[suggestions.map {|x| [x, 0]}].map { |k, v| k }
+    # @weighted_suggestions.merge!(weighted) { |key, v1, v2| v1 }
+    # (weighted_suggestions).sort_by { |k, v| -v }.map { |k, v| k }
+    #select
   end
 
   def select()

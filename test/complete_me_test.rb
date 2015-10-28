@@ -1,7 +1,7 @@
 require 'pry'
 require 'minitest'
 require 'minitest/autorun'
-require './complete_me'
+require '../lib/complete_me'
 
 class CompleteMeTest < Minitest::Test
   attr_reader :tree
@@ -86,12 +86,12 @@ class CompleteMeTest < Minitest::Test
   #   assert_equal 3, tree.count
   # end
   #
-  # def test_counts_words_with_different_prefix
-  #   tree.insert("art")
-  #   tree.insert("bat")
-  #   tree.insert("zoo")
-  #   assert_equal 3, tree.count
-  # end
+  def test_counts_words_with_different_prefix
+    tree.insert("art")
+    tree.insert("a")
+    #tree.insert("zoo")
+    assert_equal 2, tree.count
+  end
   #
   # def test_counts_words_with_prexisting_path
   #   skip
@@ -152,11 +152,11 @@ class CompleteMeTest < Minitest::Test
   #   assert_equal ["cart", "card"], tree.suggest("ca")
   # end
 
-  def test_it_suggests_deeply_branched_paths
-    tree.insert("art")
-    tree.insert("artisinal")
-    tree.insert("artitistically")
-    assert_equal ["artisinal", "artitistically", "art"], tree.suggest("ar")
-  end
+  # def test_it_suggests_deeply_branched_paths
+  #   tree.insert("art")
+  #   tree.insert("artisinal")
+  #   tree.insert("artitistically")
+  #   assert_equal ["artisinal", "artitistically", "art"], tree.suggest("ar")
+  # end
 
 end
