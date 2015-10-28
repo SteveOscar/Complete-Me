@@ -26,6 +26,12 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["a", "b"], tree.children.keys
   end
 
+  def test_keys_dont_repeat
+    tree.insert("a")
+    tree.insert("a")
+    assert_equal ["a"], tree.children.keys
+  end
+
   def test_correctly_inserts_words_with_different_first_letters
     tree.insert("art")
     tree.insert("bat")
@@ -38,8 +44,12 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["a"], tree.children.keys
   end
 
-  def test_is_word_start_as_false
+  def test_is_word_starts_as_false
     refute tree.is_word
+  end
+
+  def test_children_starts_empty
+    assert tree.children.empty?
   end
 
   def test_is_words_true_for_full_word
@@ -63,7 +73,7 @@ class CompleteMeTest < Minitest::Test
     assert_equal 1, tree.count
   end
 
-  def test_counts_same_prefix_words
+  def test_count_distinguishes_words_with_same_prefix
     tree.insert("ab")
     tree.insert("abc")
     tree.insert("abba")
@@ -83,16 +93,30 @@ class CompleteMeTest < Minitest::Test
     assert tree.count == 6
   end
 
-  def test_it_populates_a_file
+  def test_it_populates_a_simple_file
     text = "car\nbat\nzoo"
     result = tree.populate(text)
     assert tree.count == 3
   end
 
-  def test_it_populates_larger_file
+  def test_it_inserts_many_keys
+    text = "z\na\nx\nw\nc\nl\nq\ne"
+    result = tree.populate(text)
+    assert_equal 8, tree.children.keys.length
+  end
+
+  def test_it_populates_more_complex_words
     text = @words
     result = tree.populate(text)
     assert tree.count == 6
+  end
+
+  def test_it_auto_suggests_basic_words
+    skip
+    tree.insert("cat")
+    tree.insert("car")
+    tree.insert("cab")
+    assert_equal 3, tree.auto_suggest("ca")
   end
 
 end

@@ -31,12 +31,6 @@ class CompleteMe
     words.each { |word| insert(word)}
   end
 
-  # def auto_suggest(prefix)
-  #   if
-  #
-  #   end
-  # end
-
   # a  count -> [2].reduce(:+) + (0) => 2
   # b* count -> [1].reduce(:+) + (1) => 2
   # c*       ->            1         => 1
@@ -51,4 +45,37 @@ class CompleteMe
     end
   end
 
+  def auto_suggest(prefix)
+    node = self
+    prefix.each_char do |letter|
+      node = children[letter]
+    end
+    retrieve_suffix
+  end
+
+  def retrieve_endings
+    if children.empty?
+      word if is_word?
+    else
+      endings = children.map do |letter, child_trie|
+        child_trie.retrieve_endings
+      end
+      endings << word if is_word?
+    end
+  end
+
 end
+  # def auto_suggest(prefix)
+  #   node = self
+  #   prefix.each_char do |letter|
+  #     return Set.new
+  #     node = node.children
+  #   end
+  #   return node.prefixes
+  # end
+  #
+  # def prefixes
+  #   results = Set.new
+  #   results.add if is_word?
+  #   return if children.empty?
+  # end
