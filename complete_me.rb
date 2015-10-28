@@ -6,6 +6,7 @@ class CompleteMe
     @children = {}
     @is_word = is_word
     @word = word
+    @weighted_suggestions = {}
   end
 
   def add_letter(letter, string)
@@ -41,20 +42,20 @@ class CompleteMe
     end
   end
 
+  #.sort_by { |k, v| -v }
+
   def suggestion_weighting(suggestions)
-    weighted = (Hash[suggestions.map {|x| [x, 0]}]).sort_by { |k, v| -v }
-    print weighted.map { |k, v| k }
-    binding.pry
-    weighted.sort_by { |k, v| -v }
-    puts weighted.keys
+    weighted = Hash[suggestions.map {|x| [x, 0]}]
+    @weighted_suggestions.merge!(weighted) { |key, v1, v2| v1 }
+    print (weighted_suggestions).sort_by { |k, v| -v }.map { |k, v| k }
     puts "Please select a word..."
     selection = gets.chomp
-    weighted[selection] += 1
-    binding.pry
+    @weighted_suggestions[selection] += 1
+    puts "Thanks"
   end
 
 
-  def auto_suggest(prefix)
+  def suggest(prefix)
     node = self
     prefix.each_char do |letter|
       return unless node.children.has_key?(letter) #removed Set.new after return

@@ -156,7 +156,7 @@ class CompleteMeTest < Minitest::Test
     tree.insert("art")
     tree.insert("artisinal")
     tree.insert("artitistically")
-    assert_equal ["artisinal", "artitistically", "art"], tree.auto_suggest("ar")
+    assert_equal ["artisinal", "artitistically", "art"], tree.suggest("ar")
   end
 
 end
