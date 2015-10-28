@@ -48,8 +48,17 @@ class CompleteMe
     weighted = Hash[suggestions.map {|x| [x, 0]}]
     @weighted_suggestions.merge!(weighted) { |key, v1, v2| v1 }
     print (weighted_suggestions).sort_by { |k, v| -v }.map { |k, v| k }
+    select
+  end
+
+  def select()
+
+  end
+
+  def user_selection
     puts "Please select a word..."
     selection = gets.chomp
+
     @weighted_suggestions[selection] += 1
     puts "Thanks"
   end

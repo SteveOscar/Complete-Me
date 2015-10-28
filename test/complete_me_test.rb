@@ -130,29 +130,29 @@ class CompleteMeTest < Minitest::Test
   #   assert_equal 27, tree.count
   # end
   #
-  # def test_it_auto_suggests_one_level_deep
+  # def test_it_suggests_one_level_deep
   #   tree.insert("is")
-  #   assert_equal ["is"], tree.auto_suggest("i")
+  #   assert_equal ["is"], tree.suggest("i")
   # end
   #
-  # def test_it_auto_suggests_two_levels_deep
+  # def test_it_suggests_two_levels_deep
   #   tree.insert("isa")
-  #   assert_equal ["isa"], tree.auto_suggest("i")
+  #   assert_equal ["isa"], tree.suggest("i")
   # end
   #
-  # def test_it_auto_suggests_with_empty_prefix_search
+  # def test_it_suggests_with_empty_prefix_search
   #   tree.insert("cart")
   #   tree.insert("card")
-  #   assert_equal ["cart", "card"], tree.auto_suggest("")
+  #   assert_equal ["cart", "card"], tree.suggest("")
   # end
   #
-  # def test_it_auto_suggests_basic_words
+  # def test_it_suggests_basic_words
   #   tree.insert("cart")
   #   tree.insert("card")
-  #   assert_equal ["cart", "card"], tree.auto_suggest("ca")
+  #   assert_equal ["cart", "card"], tree.suggest("ca")
   # end
 
-  def test_it_auto_suggests_deeply_branched_paths
+  def test_it_suggests_deeply_branched_paths
     tree.insert("art")
     tree.insert("artisinal")
     tree.insert("artitistically")
