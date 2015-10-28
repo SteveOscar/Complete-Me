@@ -48,19 +48,21 @@ class CompleteMe
   def auto_suggest(prefix)
     node = self
     prefix.each_char do |letter|
-      node = children[letter]
+      return unless node.children.has_key?(letter #removed Set.new after return
+      node = node.children[letter]
     end
-    retrieve_suffix
+    return node.retrieve_endings
   end
 
   def retrieve_endings
     if children.empty?
-      word if is_word?
+      word if is_word
     else
       endings = children.map do |letter, child_trie|
         child_trie.retrieve_endings
       end
-      endings << word if is_word?
+      endings << word if is_word
+      puts endings
     end
   end
 
