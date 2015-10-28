@@ -1,5 +1,4 @@
 require 'pry'
-require 'set'
 class CompleteMe
   attr_accessor :children, :is_word, :word
 
@@ -48,7 +47,7 @@ class CompleteMe
   def auto_suggest(prefix)
     node = self
     prefix.each_char do |letter|
-      return unless node.children.has_key?(letter #removed Set.new after return
+      return unless node.children.has_key?(letter) #removed Set.new after return
       node = node.children[letter]
     end
     return node.retrieve_endings
@@ -62,22 +61,8 @@ class CompleteMe
         child_trie.retrieve_endings
       end
       endings << word if is_word
-      puts endings
+      return endings.flatten
     end
   end
 
 end
-  # def auto_suggest(prefix)
-  #   node = self
-  #   prefix.each_char do |letter|
-  #     return Set.new
-  #     node = node.children
-  #   end
-  #   return node.prefixes
-  # end
-  #
-  # def prefixes
-  #   results = Set.new
-  #   results.add if is_word?
-  #   return if children.empty?
-  # end
