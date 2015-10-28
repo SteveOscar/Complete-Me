@@ -31,14 +31,15 @@ class CompleteMe
     words.each { |word| insert(word)}
   end
 
-  # def count(sum = 0)
-  #   children.keys.each do |trie|
-  #     sum += 1 if children[trie].is_word
-  #     children[trie].count(sum) unless is_word
+  # def auto_suggest(prefix)
+  #   if
+  #
   #   end
-  #   sum
   # end
 
+  # a  count -> [2].reduce(:+) + (0) => 2
+  # b* count -> [1].reduce(:+) + (1) => 2
+  # c*       ->            1         => 1
   def count
     if children.empty?
       is_word ? 1 : 0
@@ -46,9 +47,7 @@ class CompleteMe
       elements = children.map do |letter, child_trie|
         child_trie.count
       end
-      sum = (is_word ? 1 : 0)
-      elements.each { |num| sum += num }
-      sum
+      elements.reduce(:+) + (is_word ? 1 : 0)
     end
   end
 

@@ -8,6 +8,7 @@ class CompleteMeTest < Minitest::Test
 
   def setup
     @tree = CompleteMe.new
+    @words = "finally\numbrella\nfrank\nunderwear\nfinished\nunusual"
   end
 
   def test_empty_tree
@@ -62,16 +63,24 @@ class CompleteMeTest < Minitest::Test
     assert_equal 1, tree.count
   end
 
-  def test_counts_prefix_words
+  def test_counts_same_prefix_words
     tree.insert("ab")
     tree.insert("abc")
-    assert_equal 2, tree.count
+    tree.insert("abba")
+    assert_equal 3, tree.count
   end
 
-  def test_counts_words_with_common_prefix
+  def test_counts_words_with_different_prefix
     tree.insert("art")
     tree.insert("bat")
-    assert_equal 2, tree.count
+    tree.insert("zoo")
+    assert_equal 3, tree.count
+  end
+
+  def test_it_counts_more_complex_tree
+    text = @words
+    result = tree.populate(text)
+    assert tree.count == 6
   end
 
   def test_it_populates_a_file
@@ -79,4 +88,11 @@ class CompleteMeTest < Minitest::Test
     result = tree.populate(text)
     assert tree.count == 3
   end
+
+  def test_it_populates_larger_file
+    text = @words
+    result = tree.populate(text)
+    assert tree.count == 6
+  end
+
 end
