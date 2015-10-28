@@ -1,6 +1,6 @@
 require 'pry'
 class CompleteMe
-  attr_accessor :children, :is_word, :word
+  attr_accessor :children, :is_word, :word, :weighted_suggestions
 
   def initialize(word = nil, is_word = false)
     @children = {}
@@ -41,13 +41,27 @@ class CompleteMe
     end
   end
 
+  def suggestion_weighting(suggestions)
+    weighted = (Hash[suggestions.map {|x| [x, 0]}]).sort_by { |k, v| -v }
+    print weighted.map { |k, v| k }
+    binding.pry
+    weighted.sort_by { |k, v| -v }
+    puts weighted.keys
+    puts "Please select a word..."
+    selection = gets.chomp
+    weighted[selection] += 1
+    binding.pry
+  end
+
+
   def auto_suggest(prefix)
     node = self
     prefix.each_char do |letter|
       return unless node.children.has_key?(letter) #removed Set.new after return
       node = node.children[letter]
     end
-    return node.retrieve_endings
+    answer = node.retrieve_endings
+    suggestion_weighting(answer)
   end
 
   def retrieve_endings
