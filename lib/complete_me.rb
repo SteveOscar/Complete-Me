@@ -55,9 +55,9 @@ class CompleteMe
         weigh[k] = @weighted[k]
       end
     end
-    weigh = weigh.sort_by { |k, v| -v }
+    weigh = weigh.sort_by { |k, v| k }.sort_by { |k, v| -v }
     return weigh.map { |k, v| k }
-    #.sort_by { |k, v| -v }.map { |k, v| k }
+
   end
 
   def select(prefix, word)
