@@ -1,12 +1,12 @@
 require 'pry'
 class CompleteMe
-  attr_accessor :children, :is_word, :word, :weighted_suggestions
+  attr_accessor :children, :is_word, :word, :weighted
 
   def initialize(word = nil, is_word = false)
     @children = {}
     @is_word = is_word
     @word = word
-    @weighted_suggestions = {}
+    @weighted = {}
   end
 
   def add_letter(letter, string)
@@ -44,24 +44,24 @@ class CompleteMe
   end
 
   def suggestion_weighting(suggestions)
-    return weighted = Hash[suggestions.map {|x| [x, 0]}].map { |k, v| k }
-    # @weighted_suggestions.merge!(weighted) { |key, v1, v2| v1 }
-    # (weighted_suggestions).sort_by { |k, v| -v }.map { |k, v| k }
-    #select
+    weigh = Hash[suggestions.map {|x| [x, 0]}]
+    weigh.each do |k, v|
+      if @weighted.keys.include?(k)
+        weigh[k] = @weighted[k]
+      end
+    end
+    weigh = weigh.sort_by { |k, v| -v }
+    return weigh.map { |k, v| k }
+    #.sort_by { |k, v| -v }.map { |k, v| k }
   end
 
-  def select()
-
+  def select(prefix, word)
+    if @weighted[word].nil?
+      @weighted[word] = 1
+    else
+      @weighted[word] += 1
+    end
   end
-
-  def user_selection
-    puts "Please select a word..."
-    selection = gets.chomp
-
-    @weighted_suggestions[selection] += 1
-    puts "Thanks"
-  end
-
 
   def suggest(prefix)
     node = self
