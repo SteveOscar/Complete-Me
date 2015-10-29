@@ -15,6 +15,33 @@ class CompleteMeTest < Minitest::Test
     assert tree.children = {}
   end
 
+  def test_is_word_starts_as_false
+    refute tree.is_word
+  end
+
+  def test_children_starts_empty
+    assert tree.children.empty?
+  end
+
+  def test_weighted_suggestions_starts_empty
+    assert tree.weighted.empty?
+  end
+
+  def test_empy_insertion_doesn_not_count
+    tree.insert("")
+    assert_equal 0, tree.count
+  end
+
+  def test_number_insertion
+    tree.insert("12324")
+    assert_equal 1, tree.count
+  end
+
+  def test_number_insertion
+    tree.insert("12324")
+    assert_equal 1, tree.count
+  end
+
   def test_it_inserts_a_letter
     tree.insert("c")
     assert_equal ["c"], tree.children.keys
@@ -24,6 +51,28 @@ class CompleteMeTest < Minitest::Test
     tree.insert("a")
     tree.insert("b")
     assert_equal ["a", "b"], tree.children.keys
+  end
+
+  def test_empty_add_letter_to_empty_tree
+    tree.add_letter("", "")
+    assert_equal [""], tree.children.keys
+  end
+
+  def test_add_nothing_does_not_create_word
+    skip
+    tree.add_letter("", "")
+    assert_equal false, tree.children[""].is_word
+  end
+
+  def test_single_letter_insert_is_word
+    skip
+    tree.add_letter("a", "a")
+    assert_equal true, tree.children["a"].is_word
+  end
+
+  def test_add_letter_to_empty_tree
+    tree.add_letter("a", "abc")
+    assert_equal ["a"], tree.children.keys
   end
 
   def test_keys_dont_repeat
@@ -50,12 +99,10 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["a"], tree.children.keys
   end
 
-  def test_is_word_starts_as_false
-    refute tree.is_word
-  end
-
-  def test_children_starts_empty
-    assert tree.children.empty?
+  def test_it_inserts_many_keys
+    text = "z\na\nx\nw\nc\nl\nq\ne"
+    result = tree.populate(text)
+    assert_equal 8, tree.children.keys.length
   end
 
   def test_is_words_true_for_full_word
@@ -86,6 +133,13 @@ class CompleteMeTest < Minitest::Test
     assert_equal 3, tree.count
   end
 
+  def test_count_distinguishes_words_on_long_shared_branch
+    tree.insert("aaabbbcccc")
+    tree.insert("aaabbbcc")
+    tree.insert("aaaabb")
+    assert_equal 3, tree.count
+  end
+
   def test_counts_words_with_different_prefix
     tree.insert("aar")
     tree.insert("xoo")
@@ -93,9 +147,19 @@ class CompleteMeTest < Minitest::Test
     assert_equal 3, tree.count
   end
 
-  def test_counts_words_with_prexisting_pathgi
-    tree.insert("barter")
-    tree.insert("bar")
+  def test_counts_upcase_words
+    tree.insert("CHINA")
+    assert_equal 1, tree.count
+  end
+
+  def test_it_allows_for_spaces_in_words
+    tree.insert("a phrase okay")
+    assert_equal 1, tree.count
+  end
+
+  def test_counts_proper_nouns_seperately
+    tree.insert("china")
+    tree.insert("China")
     assert_equal 2, tree.count
   end
 
@@ -105,16 +169,22 @@ class CompleteMeTest < Minitest::Test
     assert tree.count == 6
   end
 
-  def test_it_populates_a_simple_file
+  def test_it_counts_more_complex_tree
+    text = @words
+    result = tree.populate(text)
+    assert tree.count == 6
+  end
+
+  def test_it_populates_a_word
+    text = "car"
+    result = tree.populate(text)
+    assert tree.count == 1
+  end
+
+  def test_it_populates_several_words
     text = "car\nbat\nzoo"
     result = tree.populate(text)
     assert tree.count == 3
-  end
-
-  def test_it_inserts_many_keys
-    text = "z\na\nx\nw\nc\nl\nq\ne"
-    result = tree.populate(text)
-    assert_equal 8, tree.children.keys.length
   end
 
   def test_it_populates_more_complex_words
@@ -124,8 +194,7 @@ class CompleteMeTest < Minitest::Test
   end
 
   def test_it_populates_larger_word_list
-    text = File.read("../lib/medium.txt")
-    result = tree.populate(text)
+    tree.populate(medium_word_list)
     assert_equal 1000, tree.count
   end
 
@@ -151,11 +220,54 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["cart", "card"], tree.suggest("ca")
   end
 
-  def test_it_suggests_deeply_branched_paths
+  def test_it_suggests_branched_paths
     tree.insert("art")
     tree.insert("artisinal")
     tree.insert("artitistically")
     assert_equal ["artisinal", "artitistically", "art"], tree.suggest("ar")
+  end
+
+  def test_suggests_two_words_for_control_test
+    tree.insert("stoically")
+    tree.insert("stocking")
+    assert_equal ["stoically", "stocking"], tree.suggest("sto")
+  end
+
+  def test_suggests_from_a_large_list
+    tree.populate(medium_word_list)
+    assert_equal ["carbonero", "carboxylase"], tree.suggest("carb")
+  end
+
+  def test_suggests_full_list_from_blank_suggest
+    tree.populate(medium_word_list)
+    assert_equal 1000, tree.suggest("").count
+  end
+
+  def test_suggests_nothing_from_a_space
+    tree.populate(medium_word_list)
+    assert_equal nil, tree.suggest(" ")
+  end
+  #
+  # def test_raises_no_method_error_on_suggest_intiger
+  #   skip
+  #   assert_raises(NoMethodError) tree.suggest(1)
+  # end
+
+  def test_select_successfully_weights_word_suggestions
+    tree.insert("stoically")
+    tree.insert("stocking")
+    tree.select("sto", "stocking")
+    assert_equal ["stocking", "stoically"], tree.suggest("sto")
+  end
+
+  def test_selects_weights_from_a_large_list
+    tree.populate(medium_word_list)
+    tree.select("sto", "stocking")
+    assert_equal ["stocking", "stoically"], tree.suggest("sto")
+  end
+
+  def medium_word_list
+    File.read("../lib/medium.txt")
   end
 
 end
