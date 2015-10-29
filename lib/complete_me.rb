@@ -9,7 +9,7 @@ class CompleteMe
   end
 
   def populate(text)
-    words = text.split("\n").each { |word| insert(word) }
+    text.split("\n").each { |word| insert(word) }
   end
 
   def count
@@ -33,10 +33,10 @@ class CompleteMe
   end
 
   def insert(string)
-    if (string.is_a? String) && string.length > 0
+    if (string.kind_of? String) && string.length > 0
       walk_tree(string, 1)
     else
-      return 'Only insert strings'
+      'Only insert strings'
     end
   end
 

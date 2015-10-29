@@ -293,6 +293,7 @@ class CompleteMeTest < Minitest::Test
   def test_select_successfully_weights_word_suggestions
     tree.insert("stoically")
     tree.insert("stocking")
+    assert_equal ["stoically", "stocking"], tree.suggest("sto")
     tree.select("sto", "stocking")
     assert_equal ["stocking", "stoically"], tree.suggest("sto")
   end
