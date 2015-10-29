@@ -225,8 +225,13 @@ class CompleteMeTest < Minitest::Test
   end
 
   def test_it_populates_larger_word_list
-    tree.populate(medium_word_list)
+    tree.populate(bigger_list)
     assert_equal 1000, tree.count
+  end
+
+  def test_it_populates_larger_word_list
+    tree.populate(biggest_list)
+    assert_equal 235886, tree.count
   end
 
   def test_it_suggests_one_level_deep
@@ -243,6 +248,12 @@ class CompleteMeTest < Minitest::Test
     tree.insert("cart")
     tree.insert("card")
     assert_equal ["card", "cart"], tree.suggest("")
+  end
+
+  def test_suggest_cant_find_prefix
+    tree.insert("cart")
+    tree.insert("card")
+    assert_equal nil, tree.suggest("z")
   end
 
   def test_it_suggests_basic_words
@@ -265,17 +276,17 @@ class CompleteMeTest < Minitest::Test
   end
 
   def test_suggests_from_a_large_list
-    tree.populate(medium_word_list)
+    tree.populate(bigger_list)
     assert_equal ["carbonero", "carboxylase"], tree.suggest("carb")
   end
 
   def test_suggests_full_list_from_blank_suggest
-    tree.populate(medium_word_list)
+    tree.populate(bigger_list)
     assert_equal 1000, tree.suggest("").count
   end
 
   def test_suggests_nothing_from_a_space
-    tree.populate(medium_word_list)
+    tree.populate(bigger_list)
     assert_equal nil, tree.suggest(" ")
   end
 
@@ -286,10 +297,24 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["stocking", "stoically"], tree.suggest("sto")
   end
 
+  def test_select_wont_bring_in_irrelevant_words
+    tree.insert("bar")
+    tree.insert("zoo")
+    tree.select("ba", "zoo")
+    assert_equal ["bar"], tree.suggest("ba")
+  end
+
   def test_selects_weights_from_a_large_list
-    tree.populate(medium_word_list)
+    tree.populate(bigger_list)
     tree.select("sto", "stocking")
     assert_equal ["stocking", "stoically"], tree.suggest("sto")
+  end
+
+
+  def test_selects_weights_from_a_large_list
+    tree.populate(biggest_list)
+    tree.select("stoica", "stoicalness")
+    assert_equal ["stoicalness", "stoically", "stoical"], tree.suggest("stoica")
   end
 
   def test_select_adds_together_multiple_selections
@@ -301,17 +326,26 @@ class CompleteMeTest < Minitest::Test
   end
 
   def test_suggest_can_return_a_large_amount_of_words
-    tree.populate(medium_word_list)
+    tree.populate(bigger_list)
     assert_equal 65, tree.suggest("a").count
   end
 
+  def test_suggest_can_return_a_huge_amount_of_words
+    tree.populate(biggest_list)
+    assert_equal 14537, tree.suggest("a").count
+  end
+
   def test_suggest_returns_nothing_with_invalid_prefix
-    tree.populate(medium_word_list)
+    tree.populate(bigger_list)
     assert_equal true, tree.suggest(" ").nil?
   end
 
-  def medium_word_list
+  def bigger_list
     File.read("./lib/medium.txt")
+  end
+
+  def biggest_list
+    File.read("/usr/share/dict/words")
   end
 
 end

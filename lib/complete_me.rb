@@ -9,8 +9,7 @@ class CompleteMe
   end
 
   def populate(text)
-    words = text.split("\n")
-    words.each { |word| insert(word) }
+    words = text.split("\n").each { |word| insert(word) }
   end
 
   def count
@@ -54,13 +53,6 @@ class CompleteMe
     end
   end
 
-  def suggestion_weighting(suggestions)
-    weigh = Hash[suggestions.map { |x| [x, 0] }]
-    weigh.each { |k, v| weigh[k] = @weighted[k] if @weighted.keys.include?(k) }
-    weigh = weigh.sort_by { |k, v| k }.sort_by { |k, v| -v }
-    weigh.map { |k, v| k }
-  end
-
   def suggest(prefix)
     node = self
     prefix.each_char do |letter|
@@ -78,6 +70,13 @@ class CompleteMe
       endings << word if is_word
       return endings.flatten
     end
+  end
+
+  def suggestion_weighting(suggestions)
+    weigh = Hash[suggestions.map { |x| [x, 0] }]
+    weigh.each { |k, v| weigh[k] = @weighted[k] if @weighted.keys.include?(k) }
+    weigh = weigh.sort_by { |k, v| k }.sort_by { |k, v| -v }
+    weigh.map { |k, v| k }
   end
 
   def select(_prefix, word)
