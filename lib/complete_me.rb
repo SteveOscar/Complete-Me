@@ -9,7 +9,27 @@ class CompleteMe
     @weighted = {}
   end
 
-  def add_letter(letter, string)
+  def populate(text)
+    words = text.split("\n")
+    words.each { |word| insert(word)}
+  end
+
+  def select(prefix, word)
+    @weighted[word].nil? ? @weighted[word] = 1 : @weighted[word] += 1
+  end
+
+  def count
+    if children.empty?
+      is_word ? 1 : 0
+    else
+      elements = children.map do |letter, child|
+        child.count
+      end
+      elements.reduce(:+) + (is_word ? 1 : 0)
+    end
+  end
+
+  def add_letter_node(letter, string)
     val = word ? word + letter : letter
     if val == string
       children[letter] = CompleteMe.new(val, true)
@@ -19,77 +39,49 @@ class CompleteMe
   end
 
   def insert(string)
+    if (string.is_a? String) && string.length > 0
+      walk_tree(string, 1)
+    else
+      return "Only insert strings"
+    end
+  end
+
+  def walk_tree(string, count)
     node = self
-    count = 1
     string.each_char do |letter|
       if node.children.has_key?(letter)
         node.children[letter].is_word = true if count == string.length
       else
-        node.add_letter(letter, string)
+        node.add_letter_node(letter, string)
       end
       node = node.children[letter]
       count += 1
     end
   end
 
-  def populate(text)
-    words = text.split("\n")
-    words.each { |word| insert(word)}
-  end
-
-  def count
-    if children.empty?
-      is_word ? 1 : 0
-    else
-      elements = children.map do |letter, child_trie|
-        child_trie.count
-      end
-      elements.reduce(:+) + (is_word ? 1 : 0)
-    end
-  end
-
   def suggestion_weighting(suggestions)
     weigh = Hash[suggestions.map {|x| [x, 0]}]
-    weigh.each do |k, v|
-      if @weighted.keys.include?(k)
-        weigh[k] = @weighted[k]
-      end
-    end
+    weigh.each { |k, v| weigh[k] = @weighted[k] if @weighted.keys.include?(k) }
     weigh = weigh.sort_by { |k, v| k }.sort_by { |k, v| -v }
     return weigh.map { |k, v| k }
-
-  end
-
-  def select(prefix, word)
-    if @weighted[word].nil?
-      @weighted[word] = 1
-    else
-      @weighted[word] += 1
-    end
   end
 
   def suggest(prefix)
     node = self
     prefix.each_char do |letter|
-      return unless node.children.has_key?(letter) #removed Set.new after return
+      return unless node.children.has_key?(letter)
       node = node.children[letter]
     end
-    answer = node.retrieve_endings
-    suggestion_weighting(answer)
+    suggestion_weighting(node.retrieve_endings)
   end
 
   def retrieve_endings
     if children.empty?
       word if is_word
     else
-      endings = children.map do |letter, child_trie|
-        child_trie.retrieve_endings
-      end
+      endings = children.map { |letter, child| child.retrieve_endings}
       endings << word if is_word
       return endings.flatten
     end
   end
-
-  ## add tests that RaiseError
-
 end

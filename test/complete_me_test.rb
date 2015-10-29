@@ -23,6 +23,22 @@ class CompleteMeTest < Minitest::Test
     assert tree.children.empty?
   end
 
+  def test_node_created_with_word_value
+    tree = CompleteMe.new("snow")
+    assert_equal "snow", tree.word
+  end
+
+  def test_node_created_with_word_flag
+    tree = CompleteMe.new("snow", true)
+    assert_equal true, tree.is_word
+  end
+
+  def test_node_created_with_word_value_but_false_flag
+    tree = CompleteMe.new("snow", false)
+    assert_equal false, tree.is_word
+    assert_equal "snow", tree.word
+  end
+
   def test_weighted_suggestions_starts_empty
     assert tree.weighted.empty?
   end
@@ -53,25 +69,34 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["a", "b"], tree.children.keys
   end
 
+  def test_it_rejects_intigers
+    message = "Only insert strings"
+    assert_equal message, tree.insert(9)
+  end
+
+  def test_it_rejects_variables
+    message = "Only insert strings"
+    var = 8
+    assert_equal message, tree.insert(var)
+  end
+
   def test_empty_add_letter_to_empty_tree
-    tree.add_letter("", "")
+    tree.add_letter_node("", "")
     assert_equal [""], tree.children.keys
   end
 
-  def test_add_nothing_does_not_create_word
-    skip
-    tree.add_letter("", "")
-    assert_equal false, tree.children[""].is_word
+  def test_insertion_always_creates_a_word
+    tree.add_letter_node(".", ".")
+    assert_equal true, tree.children["."].is_word
   end
 
   def test_single_letter_insert_is_word
-    skip
-    tree.add_letter("a", "a")
+    tree.add_letter_node("a", "a")
     assert_equal true, tree.children["a"].is_word
   end
 
   def test_add_letter_to_empty_tree
-    tree.add_letter("a", "abc")
+    tree.add_letter_node("a", "abc")
     assert_equal ["a"], tree.children.keys
   end
 
@@ -99,10 +124,16 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["a"], tree.children.keys
   end
 
-  def test_it_inserts_many_keys
+  def test_it_inserts_many_root_children
     text = "z\na\nx\nw\nc\nl\nq\ne"
     result = tree.populate(text)
     assert_equal 8, tree.children.keys.length
+  end
+
+  def test_it_stores_keys_in_children_hash
+    text = "z\na\nx\nw"
+    result = tree.populate(text)
+    assert_equal ["z", "a", "x", "w"], tree.children.keys
   end
 
   def test_is_words_true_for_full_word
@@ -211,26 +242,26 @@ class CompleteMeTest < Minitest::Test
   def test_it_suggests_with_empty_prefix_search
     tree.insert("cart")
     tree.insert("card")
-    assert_equal ["cart", "card"], tree.suggest("")
+    assert_equal ["card", "cart"], tree.suggest("")
   end
 
   def test_it_suggests_basic_words
     tree.insert("cart")
     tree.insert("card")
-    assert_equal ["cart", "card"], tree.suggest("ca")
+    assert_equal ["card", "cart"], tree.suggest("ca")
   end
 
   def test_it_suggests_branched_paths
     tree.insert("art")
     tree.insert("artisinal")
     tree.insert("artitistically")
-    assert_equal ["artisinal", "artitistically", "art"], tree.suggest("ar")
+    assert_equal ["art", "artisinal", "artitistically"], tree.suggest("ar")
   end
 
   def test_suggests_two_words_for_control_test
     tree.insert("stoically")
     tree.insert("stocking")
-    assert_equal ["stoically", "stocking"], tree.suggest("sto")
+    assert_equal ["stocking", "stoically"], tree.suggest("sto")
   end
 
   def test_suggests_from_a_large_list
@@ -247,11 +278,6 @@ class CompleteMeTest < Minitest::Test
     tree.populate(medium_word_list)
     assert_equal nil, tree.suggest(" ")
   end
-  #
-  # def test_raises_no_method_error_on_suggest_intiger
-  #   skip
-  #   assert_raises(NoMethodError) tree.suggest(1)
-  # end
 
   def test_select_successfully_weights_word_suggestions
     tree.insert("stoically")
@@ -264,6 +290,14 @@ class CompleteMeTest < Minitest::Test
     tree.populate(medium_word_list)
     tree.select("sto", "stocking")
     assert_equal ["stocking", "stoically"], tree.suggest("sto")
+  end
+
+  def test_select_adds_multiple_selections
+    tree.insert("stoically")
+    tree.insert("stocking")
+    2.times { tree.select("sto", "stocking") }
+    3.times { tree.select("sto", "stoically") }
+    assert_equal ["stoically", "stocking"], tree.suggest("sto")
   end
 
   def medium_word_list
