@@ -87,9 +87,11 @@ class CompleteMeTest < Minitest::Test
   # end
   #
   def test_counts_words_with_different_prefix
-    tree.insert("aaardvark")
+    tree.insert("aar")
+    tree.insert("aa")
     tree.insert("a")
-    assert_equal 2, tree.count
+
+    assert_equal 3, tree.count
   end
   #
   # def test_counts_words_with_prexisting_path

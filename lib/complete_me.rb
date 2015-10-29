@@ -20,10 +20,15 @@ class CompleteMe
 
   def insert(string)
     node = self
+    count = 1
     string.each_char do |letter|
-      node.add_letter(letter, string) unless node.children.has_key?(letter)
+      if node.children.has_key?(letter)
+        node.children[letter].is_word = true if count == string.length
+      else
+        node.add_letter(letter, string)
+      end
       node = node.children[letter]
-      @is_word = true if node.children.has_key?(letter) && letter == string[-1]
+      count += 1
     end
   end
 
