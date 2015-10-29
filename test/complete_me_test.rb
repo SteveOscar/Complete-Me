@@ -1,7 +1,7 @@
 require 'pry'
 require 'minitest'
 require 'minitest/autorun'
-require '../lib/complete_me'
+require './lib/complete_me'
 
 class CompleteMeTest < Minitest::Test
   attr_reader :tree
@@ -292,7 +292,7 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["stocking", "stoically"], tree.suggest("sto")
   end
 
-  def test_select_adds_multiple_selections
+  def test_select_adds_together_multiple_selections
     tree.insert("stoically")
     tree.insert("stocking")
     2.times { tree.select("sto", "stocking") }
@@ -300,8 +300,18 @@ class CompleteMeTest < Minitest::Test
     assert_equal ["stoically", "stocking"], tree.suggest("sto")
   end
 
+  def test_suggest_can_return_a_large_amount_of_words
+    tree.populate(medium_word_list)
+    assert_equal 65, tree.suggest("a").count
+  end
+
+  def test_suggest_returns_nothing_with_invalid_prefix
+    tree.populate(medium_word_list)
+    assert_equal true, tree.suggest(" ").nil?
+  end
+
   def medium_word_list
-    File.read("../lib/medium.txt")
+    File.read("./lib/medium.txt")
   end
 
 end
